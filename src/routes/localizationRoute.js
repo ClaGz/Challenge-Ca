@@ -1,7 +1,12 @@
 const { Router } = require('express');
 
+const { localizationMiddleware } = require('../middlewares');
+
+const controller = require('../controllers/localizationController');
+
 const router = Router();
-const controller = require('../controllers/localizationController')
+router.use('/', localizationMiddleware.validate);
+router.use('/', localizationMiddleware.errorHandler);
 
 router.post('/', controller.post);
 
