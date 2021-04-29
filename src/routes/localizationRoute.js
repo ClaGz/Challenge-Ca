@@ -5,8 +5,12 @@ const { localizationMiddleware } = require('../middlewares');
 const controller = require('../controllers/localizationController');
 
 const router = Router();
-router.use('/', localizationMiddleware.validate);
-router.use('/', localizationMiddleware.errorHandler);
+
+router
+    .use('/', localizationMiddleware.validateRawRequest)
+    .use('/', localizationMiddleware.transformToObject)
+    .use('/', localizationMiddleware.validateTransformedBody)
+    .use('/', localizationMiddleware.errorHandler);
 
 router.post('/', controller.post);
 

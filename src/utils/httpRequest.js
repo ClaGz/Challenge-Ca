@@ -8,8 +8,6 @@ const httpRequest = (axios, endpoint, apiKey) => {
         addresses: [],
     };
 
-    console.log('APIO - ', apiKey);
-
     return {
         build: (addresses) => {
             attributes.addresses = addresses;
@@ -26,7 +24,7 @@ const httpRequest = (axios, endpoint, apiKey) => {
             return axios.get(endpoint)
                 .then(function (response) {
                     // handle success
-                    console.log(response);
+                    console.log(JSON.stringify(response.data));
                 })
                 .catch(function (error) {
                     // handle error
