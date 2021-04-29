@@ -1,11 +1,11 @@
-const localizationService = (geoIntegrationImpl) => ({
+const localizationService = (integrationServiceImpl) => ({
     
     resolveAddressesToGeoCoding: (addresses) => {
         if(!Array.isArray(addresses)) throw 'There is no address to process';
         
-        geoIntegrationImpl.build(addresses);
-
-        return geoIntegrationImpl.do();
+        return Promise.all(addresses.map((address) => {
+            return integrationServiceImpl.getGeoLocalization(address);
+        }));
     },
 });
 

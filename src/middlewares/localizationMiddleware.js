@@ -1,7 +1,7 @@
 const { BadRequest } = require('../errors');
 
 const addressesMap = (address) => {
-    const [ street, numberAndNeighborhood, cityAndState, postalCode ] = address.split(',');
+    const [ street, numberAndNeighborhood, cityAndState, postalCode ] = encodeURI(address).split(',');
 
     const cityAndStateArray = cityAndState.trim().split(' ');
     const state = cityAndStateArray.pop();
@@ -10,7 +10,7 @@ const addressesMap = (address) => {
     const [ number, neighborhood ] = numberAndNeighborhood.trim().split(' ');
 
     return {
-        city, 
+        city,
         state,
         number,
         street,
@@ -25,7 +25,6 @@ exports.validateRawRequest = (req, res, next) => {
     const { body } = req;
 
     if(!Array.isArray(body)) throw new BadRequest("O request precisa ser uma lista");
-
     if(body.length <= 1) throw new BadRequest("O request precisa ter dois ou mais endereços");
 
     return next();
