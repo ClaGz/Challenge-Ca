@@ -1,3 +1,4 @@
+//TODO: testar isso com valores simples
 const calculateDistance = (from, to) => {
     if(!to || !from) throw new Error('Impossível calcular a distância sem origem e destino');
 
@@ -6,16 +7,30 @@ const calculateDistance = (from, to) => {
     const fromLatInteger = Math.abs(Number.parseFloat(from.lat));
     const fromLngInteger = Math.abs(Number.parseFloat(from.lng));
 
-    const latDifference = fromLatInteger - toLatInteger;
-    const lngDifference = fromLngInteger - toLngInteger;
-
-    const sqrtSum = Math.pow(latDifference, 2) + Math.pow(lngDifference, 2);
+    const sqrtSum = Math.pow(fromLatInteger - toLatInteger, 2) + Math.pow(fromLngInteger - toLngInteger, 2);
 
     return Math.sqrt(sqrtSum, 2);
-}
+};
+
+// TODO: Pensar melhor sobre onde deixar a ordenação
+const orderDistances = (distanceList, asc = true) => {
+    return distanceList.sort((currentDistance, nextDistance) => {
+        const { distanceBetween: currentDistanceBetween } = currentDistance;
+        const { distanceBetween: nextDistanceBetween } = nextDistance;
+
+        if (currentDistanceBetween > nextDistanceBetween) {
+            return 1;
+        }
+        if (currentDistanceBetween < nextDistanceBetween) {
+            return -1;
+        }
+
+        return 0;
+    });
+};
 
 const localizationService = (integrationServiceImpl) => ({
-    
+
     resolveAddressesToGeoCoding: (addresses) => {
         if(!Array.isArray(addresses)) throw 'Não há endereços para serem processados';
 
@@ -25,29 +40,34 @@ const localizationService = (integrationServiceImpl) => ({
             return integrationServiceImpl.getGeoLocalization(address);
         }));
     },
-    calculateDistanceBeetweenCodedAddresses: (geoCodedAddresses) => {
-        let indexMarker = 1;
-        const controlObject = {};
+
+    processDistanceBeetweenCodedAddresses: (geoCodedAddresses) => {
         const response = [];
-        
-        for(var i = 0; i < geoCodedAddresses.length; i++ ){
-            for(var y = indexMarker; y < geoCodedAddresses.length; y++ ) {
-                const [ addressFromI, addressFromY ] = [ geoCodedAddresses[i], geoCodedAddresses[y] ];
 
-                const id = `${addressFromI.place_id};#;${addressFromY.place_id}`;
+        for (var i = 0; i < geoCodedAddresses.length; i++) {
+            const addressFromI = geoCodedAddresses[i];
+            const { formatted_address } = addressFromI;
 
-                if (controlObject[id] === undefined) {
-                    controlObject[id] = true;
+            response.push({
+                address: formatted_address,
+                orderedDistanceList: [],
+            });
+
+            for (var y = 0; y < geoCodedAddresses.length; y++) {
+                const addressFromY = geoCodedAddresses[y];
+
+                if (addressFromI.place_id !== addressFromY.place_id) {
                     const distanceBetween = calculateDistance(addressFromI.geometry.location, addressFromY.geometry.location);
-
-                    response.push({
+                    
+                    response[i].orderedDistanceList.push({
                         distanceBetween,
                         to: addressFromY.formatted_address,
-                        from: addressFromI.formatted_address,
                     });
                 }
             }
-            indexMarker += 1;
+            response[i].orderedDistanceList = orderDistances(
+                response[i].orderedDistanceList
+            );
         }
         return response;
     }
