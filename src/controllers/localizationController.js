@@ -1,20 +1,58 @@
-const { localizationService } = require('../services');
+const {
+  BadRequest,
+  InternalError,
+  AddressInvalid,
+  AddressInvalidLength,
+} = require("../errors");
 
-//TODO: fazer por injeção;
-//FIXME: Validar timeout com requests muito grandes
-exports.post = async (req, res, next) => {
+const { validateAddressesLength } = require("../utils");
+
+//TODO: melhorar os logs
+const localizationController = (localizationServiceImpl) => ({
+  //FIXME: Validar timeout com requests muito grandes
+  post: async (req, res, next) => {
     try {
-        const { body: addresses } = req;
-        const geoCodedAddresses = await localizationService.resolveAddressesToGeoCoding(addresses);
-        //TODO: verificar se o endereço é o mesmo que foi passado
+      const { body: addresses } = req;
 
-        //TODO: renomear
-        const responseFromDistanceProcessor = localizationService.processDistanceBeetweenCodedAddresses(geoCodedAddresses.flatMap(it => it && it.results));
+      validateAddressesLength(addresses);
 
-        return res.status(201).send(responseFromDistanceProcessor);
+      const geoCodedAddresses = await localizationServiceImpl.resolveAddressesToGeoCoding(
+        addresses
+      );
+
+      //TODO: verificar se o endereço é o mesmo que foi passado
+
+      //TODO: renomear
+      const responseFromDistanceProcessor = localizationServiceImpl.processDistanceBeetweenCodedAddresses(
+        geoCodedAddresses.flatMap((it) => it && it.results)
+      );
+
+      return res.status(200).send({
+        statusCode: 200,
+        body: responseFromDistanceProcessor,
+      });
     } catch (error) {
-        console.error(error);
-        //FIXME: Tratar esse erro
-        throw error;
-    }    
-};
+      console.error(error);
+
+      const { name } = error;
+
+      const response = {
+        statusCode: 500,
+        message: "Ocorreu um erro interno ao tentar processar os endereços",
+      };
+
+      if (
+        error.statusCode == 400 ||
+        name === AddressInvalid.name ||
+        name === AddressInvalidLength.name
+      ) {
+        response.statusCode = 400;
+        response.message = error.message;
+      }
+
+      return res.status(response.statusCode).send(response);
+    }
+  },
+});
+
+module.exports = localizationController;

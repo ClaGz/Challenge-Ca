@@ -1,15 +1,15 @@
-const { Router } = require('express');
+const { Router } = require("express");
 
-const { localizationMiddleware } = require('../middlewares');
+const { localizationMiddleware } = require("../middlewares");
 
-const controller = require('../controllers/localizationController');
+const { localizationController } = require("../controllers");
 const router = Router();
 router
-    .use('/', localizationMiddleware.validateRawRequest)
-    .use('/', localizationMiddleware.transformToObject)
-    .use('/', localizationMiddleware.validateTransformedBody)
-    .use('/', localizationMiddleware.errorHandler);
+  .use("/", localizationMiddleware.validateRawRequest)
+  .use("/", localizationMiddleware.transformToObject)
+  .use("/", localizationMiddleware.validateTransformedBody)
+  .use("/", localizationMiddleware.errorHandler);
 
-router.post('/', controller.post);
+router.post("/", localizationController.post);
 
 module.exports = router;
