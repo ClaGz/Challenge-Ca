@@ -11,11 +11,8 @@ A API provê a funcionalidade:
     - [Localization](#localization)
 
 ## Installation:
-Para que a API seja instalada e utilizada basta executar o installAndRun.sh existente na raiz do projeto. Também é necessário que um valor de GOOGLE_API_KEY seja fornecido para que a API possa buscar as geolocalizações dos endereços no google. Portanto o deve-se executar:
-```
-./installAndRun.sh --GOOGLE_API_KEY=${sua_chave_da_api_do_google}
-```
-Link para o setup da sua conta de desenvolvedor no google: https://developers.google.com/maps/documentation/geocoding/cloud-setup
+Para que a API seja instalada e utilizada precisa instalar o NodeJS 14 e rodar o comando npm start. Também é necessário que uma variável de ambiente chamada GOOGLE_API_KEY seja criada para que a API possa buscar as geolocalizações dos endereços no google. Segue um link para o setup da sua conta de desenvolvedor no google: https://developers.google.com/maps/documentation/geocoding/cloud-setup
+
 ## API Rest:
 ### Endpoints:
 | URL                                    |
