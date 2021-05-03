@@ -13,7 +13,8 @@ const addressesMap = (address) => {
   const city = cityAndStateArray && cityAndStateArray.join(' ');
 
   const numberAndNeighborhoodArray = numberAndNeighborhood && numberAndNeighborhood.trim().split(' ');
-  const number = (numberAndNeighborhoodArray && numberAndNeighborhoodArray.shift()).trim();
+  let number = numberAndNeighborhoodArray && numberAndNeighborhoodArray.shift();
+  number = number && number.trim();
   const neighborhood = numberAndNeighborhoodArray && numberAndNeighborhoodArray.join(' ');
 
   return {

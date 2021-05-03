@@ -165,6 +165,10 @@ const localizationServiceMock = {
   processDistanceBeetweenCodedAddresses: () => validResponseForProcessDistanceBeetweenCodedAddresses,
 };
 
+const localizationServiceNoneAddressesFoundMock = {
+  resolveAddressesToGeoCoding: async () => [validResponseFromResolveAddressesToGeoCoding[0]],
+};
+
 const localizationServiceGoogle403Mock = {
   resolveAddressesToGeoCoding: async () => {
     throw new GoogleRequestDenied(
@@ -223,4 +227,5 @@ module.exports = {
   localizationServiceMock,
   localizationServiceGoogle400Mock,
   localizationServiceGoogle403Mock,
+  localizationServiceNoneAddressesFoundMock,
 };

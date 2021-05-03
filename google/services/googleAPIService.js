@@ -21,7 +21,7 @@ const googleAPIService = (httpRequestImpl, baseEndpoint, apiKey) => {
       console.log('GoogleAPIService - Iniciando a construção do request para buscara as geolocalizações do endereço');
       console.debug(address);
 
-      const { city, state, number, street } = address;
+      const { city, state, number, street } = address || {};
       const endpoint = `${baseEndpoint}?address=${number} ${street}, ${city}, ${state}&key=${apiKey}`.replace(
         /\s+/g,
         '+',
@@ -30,6 +30,14 @@ const googleAPIService = (httpRequestImpl, baseEndpoint, apiKey) => {
         .get(endpoint)
         .then(({ data }) => {
           if (data.error_message) throw new GoogleRequestDenied(data.error_message);
+
+          if (data.status === 'ZERO_RESULTS')
+            console.log(
+              JSON.stringify({
+                message: 'Endereço não encontrado',
+                address,
+              }),
+            );
 
           return data;
         })

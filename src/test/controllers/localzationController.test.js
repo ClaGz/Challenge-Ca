@@ -5,6 +5,7 @@ const {
   expectedValidResponseBody,
   localizationServiceGoogle400Mock,
   localizationServiceGoogle403Mock,
+  localizationServiceNoneAddressesFoundMock,
 } = require('./mocks');
 
 describe('LocalizationController', () => {
@@ -32,6 +33,22 @@ describe('LocalizationController', () => {
     return Promise.all([
       expect(response.statusCode).toBe(400),
       expect(response.message).toBe('O valor de endereços precisa ser uma lista com dois ou mais itens'),
+    ]);
+  });
+
+  test('Quando recebe request com 2 ou mais endereços válidos, mas a quantidade de endereços encontrados é menor que o mínimo necessário, deve retornar um erro com statusCode 400', async () => {
+    expect.assertions(2);
+
+    const localizationController = require('../../controllers/localizationController')(
+      localizationServiceNoneAddressesFoundMock,
+    );
+    const response = await localizationController.post(validParsedRequestBody, resMock);
+
+    return Promise.all([
+      expect(response.statusCode).toBe(400),
+      expect(response.message).toBe(
+        'A quantidade de endereços encontrados foi menor que a quantidade necessária para que as distâncias pudessem ser traçadas',
+      ),
     ]);
   });
 
