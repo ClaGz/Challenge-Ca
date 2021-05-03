@@ -1,3 +1,3 @@
 module.exports = {
-  LocalizationSchema: require("./localizationSchema"),
+  LocalizationSchema: require('./localizationSchema'),
 };

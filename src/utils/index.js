@@ -1,3 +1,3 @@
 module.exports = {
-  validateAddressesLength: require("./validateAddressesLength"),
+  validateAddressesLength: require('./validateAddressesLength'),
 };

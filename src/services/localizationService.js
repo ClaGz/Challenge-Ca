@@ -1,5 +1,5 @@
-const { validateAddressesLength } = require("../utils");
-const { AddressInvalidLength, AddressInvalid } = require("../errors");
+const { validateAddressesLength } = require('../utils');
+const { AddressInvalidLength, AddressInvalid } = require('../errors');
 
 const calculateDistance = (from, to) => {
   const toLatInteger = Math.abs(Number.parseFloat(to.lat));
@@ -7,9 +7,7 @@ const calculateDistance = (from, to) => {
   const fromLatInteger = Math.abs(Number.parseFloat(from.lat));
   const fromLngInteger = Math.abs(Number.parseFloat(from.lng));
 
-  const sqrtSum =
-    Math.pow(fromLatInteger - toLatInteger, 2) +
-    Math.pow(fromLngInteger - toLngInteger, 2);
+  const sqrtSum = Math.pow(fromLatInteger - toLatInteger, 2) + Math.pow(fromLngInteger - toLngInteger, 2);
 
   return Math.sqrt(sqrtSum, 2);
 };
@@ -32,36 +30,28 @@ const orderDistances = (distanceList) => {
 
 const validate = (addressFrom, addressTo) => {
   if (!addressFrom.geometry || !addressTo.geometry)
-    throw new AddressInvalid(
-      "Impossível calcular a distância, pois temos endereços inválidos"
-    );
+    throw new AddressInvalid('Impossível calcular a distância, pois temos endereços inválidos');
 
   if (!addressFrom.geometry.location || !addressTo.geometry.location)
-    throw new AddressInvalid(
-      "Impossível calcular a distância sem origem ou destino"
-    );
+    throw new AddressInvalid('Impossível calcular a distância sem origem ou destino');
 };
 
 const localizationService = (integrationServiceImpl) => ({
   resolveAddressesToGeoCoding: async (addresses) => {
     if (!Array.isArray(addresses) || !addresses.length)
-      throw new AddressInvalidLength("Não há endereços para serem processados");
+      throw new AddressInvalidLength('Não há endereços para serem processados');
 
-    console.log(
-      "LocalizationService - Iniciando verificação dos endereços recebidos"
-    );
+    console.log('LocalizationService - Iniciando verificação dos endereços recebidos');
 
     return Promise.all(
       addresses.map((address) => {
         return integrationServiceImpl.getGeoLocalization(address);
-      })
+      }),
     );
   },
 
   processDistanceBeetweenCodedAddresses: (geoCodedAddresses) => {
-    console.log(
-      "LocalizationService - Iniciando o processamento das distâncias entre os endereços"
-    );
+    console.log('LocalizationService - Iniciando o processamento das distâncias entre os endereços');
     validateAddressesLength(geoCodedAddresses);
 
     const response = [];
@@ -81,10 +71,7 @@ const localizationService = (integrationServiceImpl) => ({
         validate(addressFromI, addressFromY);
 
         if (addressFromI.place_id !== addressFromY.place_id) {
-          const distanceBetween = calculateDistance(
-            addressFromI.geometry.location,
-            addressFromY.geometry.location
-          );
+          const distanceBetween = calculateDistance(addressFromI.geometry.location, addressFromY.geometry.location);
 
           response[i].orderedDistanceList.push({
             distanceBetween,
@@ -92,9 +79,7 @@ const localizationService = (integrationServiceImpl) => ({
           });
         }
       }
-      response[i].orderedDistanceList = orderDistances(
-        response[i].orderedDistanceList
-      );
+      response[i].orderedDistanceList = orderDistances(response[i].orderedDistanceList);
     }
     return response;
   },

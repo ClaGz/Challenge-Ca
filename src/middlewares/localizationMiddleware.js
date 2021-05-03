@@ -1,28 +1,20 @@
-const { BadRequest } = require("../errors");
-const { LocalizationSchema } = require("../schemas");
+const { BadRequest } = require('../errors');
+const { LocalizationSchema } = require('../schemas');
 const API_MIN_ADDRESSES = 1;
 const API_MAX_ADDRESSES = 99;
 
 const addressesMap = (address) => {
-  if (!address) throw new BadRequest("Endereço inválido");
+  if (!address) throw new BadRequest('Endereço inválido');
 
-  const [street, numberAndNeighborhood, cityAndState, postalCode] = encodeURI(
-    address
-  )
-    .replace(/%20/g, " ")
-    .split(",");
+  const [street, numberAndNeighborhood, cityAndState, postalCode] = encodeURI(address).replace(/%20/g, ' ').split(',');
 
-  const cityAndStateArray = cityAndState && cityAndState.trim().split(" ");
+  const cityAndStateArray = cityAndState && cityAndState.trim().split(' ');
   const state = cityAndStateArray && cityAndStateArray.pop();
-  const city = cityAndStateArray && cityAndStateArray.join(" ");
+  const city = cityAndStateArray && cityAndStateArray.join(' ');
 
-  const numberAndNeighborhoodArray =
-    numberAndNeighborhood && numberAndNeighborhood.trim().split(" ");
-  const number = (
-    numberAndNeighborhoodArray && numberAndNeighborhoodArray.shift()
-  ).trim();
-  const neighborhood =
-    numberAndNeighborhoodArray && numberAndNeighborhoodArray.join(" ");
+  const numberAndNeighborhoodArray = numberAndNeighborhood && numberAndNeighborhood.trim().split(' ');
+  const number = (numberAndNeighborhoodArray && numberAndNeighborhoodArray.shift()).trim();
+  const neighborhood = numberAndNeighborhoodArray && numberAndNeighborhoodArray.join(' ');
 
   return {
     city,
@@ -35,25 +27,22 @@ const addressesMap = (address) => {
 };
 
 const validateRawRequest = (req, res, next) => {
-  if (req.method !== "POST") return next();
+  if (req.method !== 'POST') return next();
 
   const { body } = req;
 
-  if (!Array.isArray(body))
-    throw new BadRequest("O request precisa ser uma lista");
-  if (body.length <= API_MIN_ADDRESSES)
-    throw new BadRequest("O request precisa ter dois ou mais endereços");
+  if (!Array.isArray(body)) throw new BadRequest('O request precisa ser uma lista');
+  if (body.length <= API_MIN_ADDRESSES) throw new BadRequest('O request precisa ter dois ou mais endereços');
 
   //Limite da conta do google. Teste com valores altos mostraram que posso tomar erro da API deles.
   //you have exceeded your rate-limit for this API.
-  if (body.length > API_MAX_ADDRESSES)
-    throw new BadRequest("O request precisa conter até 99 endereços");
+  if (body.length > API_MAX_ADDRESSES) throw new BadRequest('O request precisa conter até 99 endereços');
 
   return next();
 };
 
 const transformToObject = (req, res, next) => {
-  if (req.method !== "POST") return next();
+  if (req.method !== 'POST') return next();
 
   const { body: addresses } = req;
   req.body = addresses.map(addressesMap);
@@ -62,7 +51,7 @@ const transformToObject = (req, res, next) => {
 };
 
 const validateTransformedBody = (req, res, next) => {
-  if (req.method === "POST")
+  if (req.method === 'POST')
     req.body.forEach((address) => {
       const { error } = LocalizationSchema.validate(address);
       if (error) throw new BadRequest(error);
