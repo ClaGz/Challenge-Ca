@@ -1,28 +1,19 @@
-const {
-  BadRequest,
-  InternalError,
-  AddressInvalid,
-  AddressInvalidLength,
-} = require("../errors");
-
+const { AddressInvalid, AddressInvalidLength } = require("../errors");
 const { validateAddressesLength } = require("../utils");
 
-//TODO: melhorar os logs
 const localizationController = (localizationServiceImpl) => ({
-  //FIXME: Validar timeout com requests muito grandes
   post: async (req, res, next) => {
     try {
+      console.log(
+        "LocalizationController - Iniciando o processamento dos endereços."
+      );
       const { body: addresses } = req;
-
       validateAddressesLength(addresses);
 
       const geoCodedAddresses = await localizationServiceImpl.resolveAddressesToGeoCoding(
         addresses
       );
 
-      //TODO: verificar se o endereço é o mesmo que foi passado
-
-      //TODO: renomear
       const responseFromDistanceProcessor = localizationServiceImpl.processDistanceBeetweenCodedAddresses(
         geoCodedAddresses.flatMap((it) => it && it.results)
       );

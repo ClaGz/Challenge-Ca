@@ -1,18 +1,28 @@
 const { BadRequest } = require("../errors");
+const { LocalizationSchema } = require("../schemas");
+const API_MIN_ADDRESSES = 1;
+const API_MAX_ADDRESSES = 99;
 
-//TODO: Testar endereços com ç e acentos
 const addressesMap = (address) => {
+  if (!address) throw new BadRequest("Endereço inválido");
+
   const [street, numberAndNeighborhood, cityAndState, postalCode] = encodeURI(
     address
   )
     .replace(/%20/g, " ")
     .split(",");
 
-  const cityAndStateArray = cityAndState.trim().split(" ");
-  const state = cityAndStateArray.pop();
-  const city = cityAndStateArray.join(" ");
+  const cityAndStateArray = cityAndState && cityAndState.trim().split(" ");
+  const state = cityAndStateArray && cityAndStateArray.pop();
+  const city = cityAndStateArray && cityAndStateArray.join(" ");
 
-  const [number, neighborhood] = numberAndNeighborhood.trim().split(" ");
+  const numberAndNeighborhoodArray =
+    numberAndNeighborhood && numberAndNeighborhood.trim().split(" ");
+  const number = (
+    numberAndNeighborhoodArray && numberAndNeighborhoodArray.shift()
+  ).trim();
+  const neighborhood =
+    numberAndNeighborhoodArray && numberAndNeighborhoodArray.join(" ");
 
   return {
     city,
@@ -24,20 +34,25 @@ const addressesMap = (address) => {
   };
 };
 
-exports.validateRawRequest = (req, res, next) => {
+const validateRawRequest = (req, res, next) => {
   if (req.method !== "POST") return next();
 
   const { body } = req;
 
   if (!Array.isArray(body))
     throw new BadRequest("O request precisa ser uma lista");
-  if (body.length <= 1)
+  if (body.length <= API_MIN_ADDRESSES)
     throw new BadRequest("O request precisa ter dois ou mais endereços");
+
+  //Limite da conta do google. Teste com valores altos mostraram que posso tomar erro da API deles.
+  //you have exceeded your rate-limit for this API.
+  if (body.length > API_MAX_ADDRESSES)
+    throw new BadRequest("O request precisa conter até 99 endereços");
 
   return next();
 };
 
-exports.transformToObject = (req, res, next) => {
+const transformToObject = (req, res, next) => {
   if (req.method !== "POST") return next();
 
   const { body: addresses } = req;
@@ -46,15 +61,23 @@ exports.transformToObject = (req, res, next) => {
   return next();
 };
 
-exports.validateTransformedBody = (req, res, next) => {
-  if (req.method !== "POST") return next();
-
-  //TODO: usar o joi pra validar o corpo
-
+const validateTransformedBody = (req, res, next) => {
+  if (req.method === "POST")
+    req.body.forEach((address) => {
+      const { error } = LocalizationSchema.validate(address);
+      if (error) throw new BadRequest(error);
+    });
   return next();
 };
 
-exports.errorHandler = (httpError, req, res, next) => {
+const errorHandler = (httpError, req, res, next) => {
   const statusCode = httpError.statusCode || 500;
   return res.status(statusCode).send(httpError.message);
+};
+
+module.exports = {
+  errorHandler,
+  transformToObject,
+  validateRawRequest,
+  validateTransformedBody,
 };

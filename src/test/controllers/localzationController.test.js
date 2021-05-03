@@ -7,8 +7,6 @@ const {
   localizationServiceGoogle403Mock,
 } = require("./mocks");
 
-const { BadRequest, InternalError } = require("../../errors");
-
 describe("LocalizationController", () => {
   test("Quando recebe request com 2 ou mais endereços válidos, deve retornar uma resposta de sucesso", async () => {
     expect.assertions(2);
