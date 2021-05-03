@@ -1,7 +1,5 @@
-const { localizationService } = require("../services");
+const { localizationService } = require('../services');
 
 module.exports = {
-  localizationController: require("./localizationController")(
-    localizationService
-  ),
+  localizationController: require('./localizationController')(localizationService),
 };

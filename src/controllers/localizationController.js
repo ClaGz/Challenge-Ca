@@ -1,21 +1,17 @@
-const { AddressInvalid, AddressInvalidLength } = require("../errors");
-const { validateAddressesLength } = require("../utils");
+const { AddressInvalid, AddressInvalidLength } = require('../errors');
+const { validateAddressesLength } = require('../utils');
 
 const localizationController = (localizationServiceImpl) => ({
   post: async (req, res, next) => {
     try {
-      console.log(
-        "LocalizationController - Iniciando o processamento dos endereços."
-      );
+      console.log('LocalizationController - Iniciando o processamento dos endereços.');
       const { body: addresses } = req;
       validateAddressesLength(addresses);
 
-      const geoCodedAddresses = await localizationServiceImpl.resolveAddressesToGeoCoding(
-        addresses
-      );
+      const geoCodedAddresses = await localizationServiceImpl.resolveAddressesToGeoCoding(addresses);
 
       const responseFromDistanceProcessor = localizationServiceImpl.processDistanceBeetweenCodedAddresses(
-        geoCodedAddresses.flatMap((it) => it && it.results)
+        geoCodedAddresses.flatMap((it) => it && it.results),
       );
 
       return res.status(200).send({
@@ -29,14 +25,10 @@ const localizationController = (localizationServiceImpl) => ({
 
       const response = {
         statusCode: 500,
-        message: "Ocorreu um erro interno ao tentar processar os endereços",
+        message: 'Ocorreu um erro interno ao tentar processar os endereços',
       };
 
-      if (
-        error.statusCode == 400 ||
-        name === AddressInvalid.name ||
-        name === AddressInvalidLength.name
-      ) {
+      if (error.statusCode == 400 || name === AddressInvalid.name || name === AddressInvalidLength.name) {
         response.statusCode = 400;
         response.message = error.message;
       }

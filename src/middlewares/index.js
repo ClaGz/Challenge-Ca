@@ -1,3 +1,3 @@
 module.exports = {
-  localizationMiddleware: require("./localizationMiddleware"),
+  localizationMiddleware: require('./localizationMiddleware'),
 };
