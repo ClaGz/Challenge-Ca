@@ -6,7 +6,7 @@ A API provê a funcionalidade:
 - [Localization API](#localization-api)
   - [Installation:](#installation)
   - [API Rest:](#api-rest)
-    - [End-points:](#end-points)
+    - [Endpoints:](#endpoints)
   - [Requests](#requests)
     - [Localization](#localization)
 
@@ -17,7 +17,7 @@ Para que a API seja instalada e utilizada basta executar o installAndRun.sh exis
 ```
 Link para o setup da sua conta de desenvolvedor no google: https://developers.google.com/maps/documentation/geocoding/cloud-setup
 ## API Rest:
-### End-points:
+### Endpoints:
 | URL                                    |
 | -------------------------------------- |
 | http://localhost:3000/localizations |
@@ -25,7 +25,7 @@ Link para o setup da sua conta de desenvolvedor no google: https://developers.go
 ## Requests
 ### Localization
 
-`POST`[`${HOST}`](#end-points)`/localizations`\
+`POST`[`${HOST}`](#end-points)`/localizations`
 
 -   Exemplo de requisição:
 
