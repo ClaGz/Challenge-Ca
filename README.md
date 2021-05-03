@@ -11,7 +11,7 @@ A API provê a funcionalidade:
     - [Localization](#localization)
 
 ## Installation:
-Para que a API seja instalada e utilizada precisa instalar o NodeJS 14 e rodar o comando npm start. Também é necessário que uma variável de ambiente chamada GOOGLE_API_KEY seja criada para que a API possa buscar as geolocalizações dos endereços no google. Segue um link para o setup da sua conta de desenvolvedor no google: https://developers.google.com/maps/documentation/geocoding/cloud-setup
+Para que a API seja instalada e utilizada, é necessário que o NodeJS 14 seja instalado. Após esse passo é necessário instalar as dependências do projeto (npm install) e rodar o comando npm start. Também é necessário que uma variável de ambiente chamada GOOGLE_API_KEY seja criada para que a API possa buscar as geolocalizações dos endereços no google. Segue um link para o setup da sua conta de desenvolvedor no google: https://developers.google.com/maps/documentation/geocoding/cloud-setup
 
 ## API Rest:
 ### Endpoints:
