@@ -7,5 +7,4 @@ const { home, localizationRoute } = require('./routes');
 app.use('/', home);
 app.use('/localizations', localizationRoute);
 
-//TODO: ver um prettier/lint
 module.exports = app;

@@ -96,7 +96,7 @@ describe('LocalizationMiddleware', () => {
     };
 
     return expect(() => localizationMiddleware.transformToObject(req, resMock, nextMock)).toThrowError(
-      'Endereço inválido',
+      `Endereço inválido, pois o valor está vazio`,
     );
   });
 
@@ -105,11 +105,11 @@ describe('LocalizationMiddleware', () => {
 
     const req = {
       method: methodMock,
-      body: [''],
+      body: [undefined],
     };
 
     return expect(() => localizationMiddleware.transformToObject(req, resMock, nextMock)).toThrowError(
-      'Endereço inválido',
+      `Endereço inválido, pois o valor está vazio`,
     );
   });
 

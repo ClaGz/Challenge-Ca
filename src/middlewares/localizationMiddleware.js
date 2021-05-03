@@ -4,7 +4,7 @@ const API_MIN_ADDRESSES = 1;
 const API_MAX_ADDRESSES = 99;
 
 const addressesMap = (address) => {
-  if (!address) throw new BadRequest('Endereço inválido');
+  if (!address) throw new BadRequest(`Endereço inválido, pois o valor está vazio`);
 
   const [street, numberAndNeighborhood, cityAndState, postalCode] = encodeURI(address).replace(/%20/g, ' ').split(',');
 
