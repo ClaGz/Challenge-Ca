@@ -1,7 +1,6 @@
 const { validateAddressesLength } = require("../utils");
 const { AddressInvalidLength, AddressInvalid } = require("../errors");
 
-//TODO: testar isso com valores simples
 const calculateDistance = (from, to) => {
   const toLatInteger = Math.abs(Number.parseFloat(to.lat));
   const toLngInteger = Math.abs(Number.parseFloat(to.lng));
@@ -15,8 +14,7 @@ const calculateDistance = (from, to) => {
   return Math.sqrt(sqrtSum, 2);
 };
 
-// TODO: Pensar melhor sobre onde deixar a ordenação
-const orderDistances = (distanceList, asc = true) => {
+const orderDistances = (distanceList) => {
   return distanceList.sort((currentDistance, nextDistance) => {
     const { distanceBetween: currentDistanceBetween } = currentDistance;
     const { distanceBetween: nextDistanceBetween } = nextDistance;
@@ -45,11 +43,13 @@ const validate = (addressFrom, addressTo) => {
 };
 
 const localizationService = (integrationServiceImpl) => ({
-  resolveAddressesToGeoCoding: (addresses) => {
-    if (!Array.isArray(addresses))
+  resolveAddressesToGeoCoding: async (addresses) => {
+    if (!Array.isArray(addresses) || !addresses.length)
       throw new AddressInvalidLength("Não há endereços para serem processados");
 
-    console.log("Iniciando verificação dos endereços recebidos");
+    console.log(
+      "LocalizationService - Iniciando verificação dos endereços recebidos"
+    );
 
     return Promise.all(
       addresses.map((address) => {
@@ -59,6 +59,9 @@ const localizationService = (integrationServiceImpl) => ({
   },
 
   processDistanceBeetweenCodedAddresses: (geoCodedAddresses) => {
+    console.log(
+      "LocalizationService - Iniciando o processamento das distâncias entre os endereços"
+    );
     validateAddressesLength(geoCodedAddresses);
 
     const response = [];
